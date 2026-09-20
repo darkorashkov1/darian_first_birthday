@@ -10,6 +10,11 @@ interface EnvelopeModalProps {
 export default function EnvelopeModal({ isOpen, onOpen, lang, text }: EnvelopeModalProps) {
   if (isOpen) return null;
 
+  const handleOpenClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onOpen();
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-sky-950/80 backdrop-blur-2xl flex items-center justify-center p-4 transition-all duration-700 animate-fade-in">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-tr from-sky-400/20 to-amber-300/20 rounded-full blur-[100px] pointer-events-none animate-pulse"></div>
@@ -37,7 +42,7 @@ export default function EnvelopeModal({ isOpen, onOpen, lang, text }: EnvelopeMo
         </div>
 
         <button
-          onClick={onOpen}
+          onClick={handleOpenClick}
           className="group relative w-full py-4.5 bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-extrabold rounded-2xl uppercase tracking-wider text-xs transition-all shadow-xl shadow-sky-600/30 cursor-pointer flex items-center justify-center gap-2 overflow-hidden"
         >
           <div className="absolute inset-0 w-1/2 h-full bg-white/20 skew-x-[45deg] -translate-x-full group-hover:translate-x-[300%] transition-transform duration-1000"></div>

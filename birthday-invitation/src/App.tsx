@@ -6,10 +6,8 @@ import EnvelopeModal from './components/EnvelopeModal';
 import Hero from './components/Hero';
 import Countdown from './components/Countdown';
 import LocationSection from './components/LocationSection';
-import DressCode from './components/DressCode';
 import PhotoWall from './components/PhotoWall';
 import RsvpForm from './components/RsvpForm';
-import Footer from './components/Footer';
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,15 +16,18 @@ export default function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.get('view') === 'photos') {
-      setIsOpen(true); // Skip the envelope
+    const hasGalleryHash = window.location.hash === '#gallery';
 
+    if (params.get('view') === 'photos' || hasGalleryHash) {
+      setIsOpen(true); // Hide the envelope immediately
+
+      // Scroll down to the gallery after the page renders
       setTimeout(() => {
         const photoWallElement = document.getElementById('photo-wall-section');
         if (photoWallElement) {
           photoWallElement.scrollIntoView({ behavior: 'smooth' });
         }
-      }, 100);
+      }, 300);
     }
   }, []);
 
@@ -45,11 +46,9 @@ export default function App() {
       <div className={`transition-all duration-1000 transform ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}>
         <Hero t={t} />
         <Countdown t={t} />
-        <LocationSection t={t} />
-        <DressCode t={t} />
-        <PhotoWall t={t}/>
         <RsvpForm t={t} />
-        <Footer t={t} />
+        <PhotoWall t={t}/>
+        <LocationSection t={t} />
       </div>
 
       <ScrollToTop />

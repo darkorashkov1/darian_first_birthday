@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# Darian's 1st Birthday & Christening Invitation
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A modern, interactive, bilingual digital invitation and live celebration platform built for Darian's 1st Birthday and Christening.
 
-Currently, two official plugins are available:
+## Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Interactive Envelope Experience:** An animated opening envelope intro that sets a celebratory mood and directs users smoothly to the invitation.
+- **Bilingual Support:** Fully supports Macedonian (`mk`) and English (`en`) languages with a seamless language toggle.
+- **Live Countdown Timer:** Real-time countdown tracking the days, hours, minutes, and seconds until the big event.
+- **RSVP Form with Google Sheets Integration:** Guests can confirm attendance, specify the number of adult guests and kids, and note dietary requirements—automatically logged directly into a Google Sheet via Google Apps Script.
+- **Live Memory Wall (Photo Wall):** A real-time photo gallery powered by Firebase where guests can snap photos via their camera or upload from their device gallery during the party.
+- **QR Code Direct Access:** Supports a special query parameter route (`/?view=photos`) to instantly bypass the envelope and land guests directly on the live photo wall when scanning table/card QR codes.
+- **Location & Event Details:** Clear venue mapping and schedule information.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the Oxlint configuration
+- **Frontend:** React, TypeScript, Vite
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Backend & Storage:** Firebase Storage & Realtime database/listeners for the live photo stream
+- **RSVP Backend:** Google Apps Script & Google Sheets API
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+---
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Getting Started Locally
+
+To run or develop this project locally on your machine, follow these steps:
+
+### 1. Clone the repository
+
+```bash
+git clone [https://github.com/your-username/darians-birthday.git](https://github.com/your-username/darians-birthday.git)
+cd darians-birthday
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+# This project is created for private family celebrations. All rights reserved.

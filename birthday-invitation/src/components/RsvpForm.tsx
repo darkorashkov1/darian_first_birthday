@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { User, Heart, Users, Utensils, Send, CheckCircle2 } from 'lucide-react';
+import { User, Heart, Users, Baby, Utensils, Send, CheckCircle2 } from 'lucide-react';
 
 export default function RsvpForm({ t }: { t: any }) {
   const [formData, setFormData] = useState({
     name: '',
     guestCount: 1,
+    kidCount: 0,
     attending: 'yes',
     dietaryNotes: '',
   });
@@ -21,14 +22,15 @@ export default function RsvpForm({ t }: { t: any }) {
         ...prev,
         attending: value,
         guestCount: value === 'no' ? 0 : (prev.guestCount === 0 ? 1 : prev.guestCount),
+        kidCount: value === 'no' ? 0 : prev.kidCount,
       }));
       return;
     }
 
-    const isGuestCount = name === 'guestCount';
+    const isNumericField = name === 'guestCount' || name === 'kidCount';
     setFormData(prev => ({
       ...prev,
-      [name]: isGuestCount ? parseInt(value) || 0 : value,
+      [name]: isNumericField ? parseInt(value) || 0 : value,
     }));
   };
 
@@ -37,12 +39,13 @@ export default function RsvpForm({ t }: { t: any }) {
     setLoading(true);
     setError('');
 
-    // PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+    // Google Apps Script Web App URL
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyNS6GX8-5Ou3JrWEKOPZafmH-KH6ccit41c1v9fRr9Yrzgg-6X4N4qlrmmC9dVStl-/exec';
 
     const finalData = {
       ...formData,
-      guestCount: formData.attending === 'yes' ? formData.guestCount : 0
+      guestCount: formData.attending === 'yes' ? formData.guestCount : 0,
+      kidCount: formData.attending === 'yes' ? formData.kidCount : 0,
     };
 
     try {
@@ -102,26 +105,26 @@ export default function RsvpForm({ t }: { t: any }) {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-sky-900 mb-2 font-extrabold flex items-center gap-1.5">
-                  <Heart className="w-4 h-4 text-sky-600" /> {t.attendingLabel}
-                </label>
-                <select
-                  name="attending"
-                  value={formData.attending}
-                  onChange={handleChange}
-                  className={`w-full border rounded-2xl px-4 py-3.5 focus:outline-none cursor-pointer font-bold transition-colors ${
-                    formData.attending === 'yes'
-                      ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 focus:border-emerald-500'
-                      : 'bg-rose-50/90 border-rose-300 text-rose-950 focus:border-rose-500'
-                  }`}
-                >
-                  <option value="yes" className="bg-white text-emerald-900">{t.accept}</option>
-                  <option value="no" className="bg-white text-rose-900">{t.decline}</option>
-                </select>
-              </div>
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-sky-900 mb-2 font-extrabold flex items-center gap-1.5">
+                <Heart className="w-4 h-4 text-sky-600" /> {t.attendingLabel}
+              </label>
+              <select
+                name="attending"
+                value={formData.attending}
+                onChange={handleChange}
+                className={`w-full border rounded-2xl px-4 py-3.5 focus:outline-none cursor-pointer font-bold transition-colors ${
+                  formData.attending === 'yes'
+                    ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950 focus:border-emerald-500'
+                    : 'bg-rose-50/90 border-rose-300 text-rose-950 focus:border-rose-500'
+                }`}
+              >
+                <option value="yes" className="bg-white text-emerald-900">{t.accept}</option>
+                <option value="no" className="bg-white text-rose-900">{t.decline}</option>
+              </select>
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs uppercase tracking-wider text-sky-900 mb-2 font-extrabold flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-sky-600" /> {t.guestsLabel}
@@ -133,6 +136,26 @@ export default function RsvpForm({ t }: { t: any }) {
                   max="10"
                   disabled={formData.attending === 'no'}
                   value={formData.guestCount}
+                  onChange={handleChange}
+                  className={`w-full border rounded-2xl px-4 py-3.5 focus:outline-none font-medium ${
+                    formData.attending === 'no'
+                      ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                      : 'bg-sky-50/50 border-sky-200 text-sky-950 focus:border-sky-500'
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-sky-900 mb-2 font-extrabold flex items-center gap-1.5">
+                  <Baby className="w-4 h-4 text-sky-600" /> {t.kidsLabel}
+                </label>
+                <input
+                  type="number"
+                  name="kidCount"
+                  min="0"
+                  max="10"
+                  disabled={formData.attending === 'no'}
+                  value={formData.kidCount}
                   onChange={handleChange}
                   className={`w-full border rounded-2xl px-4 py-3.5 focus:outline-none font-medium ${
                     formData.attending === 'no'

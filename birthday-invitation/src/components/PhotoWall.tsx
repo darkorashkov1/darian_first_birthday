@@ -24,7 +24,6 @@ export default function PhotoWall({ t }: { t: any }) {
       setLoadingPhotos(false);
     });
 
-    // Cleanup subscription on unmount
     return () => {
       if (unsubscribe) unsubscribe();
     };
@@ -42,13 +41,11 @@ export default function PhotoWall({ t }: { t: any }) {
 
     try {
       await uploadPartyPhoto(file);
-      // No need to manually call loadPhotos() anymore!
-      // The database listener will catch it automatically in milliseconds.
       setSuccess(true);
       setTimeout(() => setSuccess(false), 4000);
     } catch (error) {
       console.error("Upload failed", error);
-      alert("Грешка при качување на сликата.");
+      alert(t?.uploadError || "Error uploading the image.");
     } finally {
       if (isCamera) {
         setUploadingCamera(false);
@@ -71,12 +68,11 @@ export default function PhotoWall({ t }: { t: any }) {
   };
 
   const selectedPhoto = selectedIndex !== null ? photos[selectedIndex] : null;
-
   const displayedPhotos = photos.slice(0, visibleCount);
   const hasMorePhotos = visibleCount < photos.length;
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-b from-sky-50 to-amber-50/40">
+    <section id="photo-wall-section" className="py-20 px-6 bg-gradient-to-b from-sky-50 to-amber-50/40">
       <div className="max-w-4xl mx-auto text-center space-y-6">
 
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-100 text-amber-800 text-xs font-black tracking-wider uppercase shadow-sm">
@@ -84,10 +80,10 @@ export default function PhotoWall({ t }: { t: any }) {
         </div>
 
         <h2 className="text-3xl sm:text-5xl font-black text-sky-950 font-serif">
-          {t?.photoWallTitle || "Споделете ги вашите моментни слики 📸"}
+          {t?.photoWallTitle || "Share Your Live Party Snaps 📸"}
         </h2>
         <p className="text-sky-800 text-sm sm:text-base max-w-xl mx-auto font-medium">
-          {t?.photoWallSubtitle || "Сликајте се за време на прославата и споделете ги спомените во нашата трајна галерија!"}
+          {t?.photoWallSubtitle || "Take photos during the celebration and keep them permanently saved in our live gallery!"}
         </p>
 
         {/* Dual Upload Cards */}
@@ -97,9 +93,9 @@ export default function PhotoWall({ t }: { t: any }) {
               {uploadingCamera ? <Loader2 className="w-7 h-7 animate-spin" /> : <Camera className="w-7 h-7" />}
             </div>
             <span className="text-amber-950 font-bold text-sm">
-              {uploadingCamera ? "Се зачувува..." : (t?.cameraCardTitle || "Сликај со камера")}
+              {uploadingCamera ? (t?.uploading || "Saving...") : (t?.cameraCardTitle || "Snap Instant Photo")}
             </span>
-            <span className="text-amber-600 text-xs mt-1">Отворете ја камерата веднаш</span>
+            <span className="text-amber-600 text-xs mt-1">{t?.cameraCardSub || "Open your camera right away"}</span>
             <input
               ref={cameraInputRef}
               type="file"
@@ -116,9 +112,9 @@ export default function PhotoWall({ t }: { t: any }) {
               {uploadingGallery ? <Loader2 className="w-7 h-7 animate-spin" /> : <Upload className="w-7 h-7" />}
             </div>
             <span className="text-sky-950 font-bold text-sm">
-              {uploadingGallery ? "Се зачувува..." : (t?.uploadCardTitle || "Прикажи од галерија")}
+              {uploadingGallery ? (t?.uploading || "Saving...") : (t?.uploadCardTitle || "Upload from Library")}
             </span>
-            <span className="text-sky-500 text-xs mt-1">Изберете постоечка слика</span>
+            <span className="text-sky-500 text-xs mt-1">{t?.uploadCardSub || "Choose an existing picture"}</span>
             <input
               ref={galleryInputRef}
               type="file"
@@ -132,7 +128,7 @@ export default function PhotoWall({ t }: { t: any }) {
 
         {success && (
           <div className="max-w-md mx-auto p-3 bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center gap-2 text-xs font-bold animate-fade-in">
-            <CheckCircle2 className="w-4 h-4" /> Успешно зачувано во галеријата!
+            <CheckCircle2 className="w-4 h-4" /> {t?.uploadSuccess || "Successfully saved to the gallery!"}
           </div>
         )}
 
@@ -142,13 +138,13 @@ export default function PhotoWall({ t }: { t: any }) {
             <div className="my-6 p-4 bg-white border-2 border-sky-200 rounded-3xl shadow-xl max-w-xl mx-auto animate-fade-in flex flex-col items-center">
               <div className="w-full flex justify-between items-center mb-3 px-2">
                 <span className="text-xs font-bold text-sky-900 uppercase tracking-wide">
-                  Слика {selectedIndex! + 1} од {photos.length}
+                  {t?.previewPhotoCount ? t.previewPhotoCount(selectedIndex! + 1, photos.length) : `Photo ${selectedIndex! + 1} of ${photos.length}`}
                 </span>
                 <button
                   onClick={() => setSelectedIndex(null)}
                   className="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 transition-colors"
                 >
-                  <X className="w-4 h-4" /> Затвори
+                  <X className="w-4 h-4" /> {t?.closePreview || "Close"}
                 </button>
               </div>
 
@@ -181,7 +177,7 @@ export default function PhotoWall({ t }: { t: any }) {
                 download={`darian-birthday-${Date.now()}.jpg`}
                 className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2.5 px-6 rounded-full shadow-md text-sm flex items-center gap-2 transition-all"
               >
-                <Download className="w-4 h-4" /> Преземи ја сликата
+                <Download className="w-4 h-4" /> {t?.downloadPhoto || "Download Photo"}
               </a>
             </div>
           )}
@@ -190,7 +186,7 @@ export default function PhotoWall({ t }: { t: any }) {
         {/* Gallery Grid */}
         <div className="pt-10">
           <h3 className="text-xl font-bold text-sky-950 mb-6 flex items-center justify-center gap-2 font-serif">
-            <ImageIcon className="w-5 h-5 text-sky-600" /> Галерија на гостите ({photos.length})
+            <ImageIcon className="w-5 h-5 text-sky-600" /> {t?.guestGalleryTitle ? t.guestGalleryTitle(photos.length) : `Guest Gallery (${photos.length})`}
           </h3>
 
           {loadingPhotos ? (
@@ -198,7 +194,7 @@ export default function PhotoWall({ t }: { t: any }) {
               <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
             </div>
           ) : photos.length === 0 ? (
-            <p className="text-sm text-sky-600/80 italic">Сè уште нема качени слики. Бидете први што ќе споделете момент! ✈️</p>
+            <p className="text-sm text-sky-600/80 italic">{t?.emptyGallery || "No photos uploaded yet. Be the first to share a moment! ✈️"}</p>
           ) : (
             <>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -215,7 +211,7 @@ export default function PhotoWall({ t }: { t: any }) {
                   >
                     <img src={photo} alt="Party memory" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                      Кликни за преглед
+                      {t?.clickToPreview || "Click to preview"}
                     </div>
                   </div>
                 ))}
@@ -227,7 +223,7 @@ export default function PhotoWall({ t }: { t: any }) {
                     onClick={() => setVisibleCount((prev) => prev + 10)}
                     className="bg-transparent hover:bg-sky-500/10 text-sky-900 border-2 border-sky-400 font-bold px-8 py-3 rounded-full transition-all shadow-sm text-sm tracking-wide"
                   >
-                    Прикажи повеќе ({photos.length - visibleCount} преостанати)
+                    {t?.showMore ? t.showMore(photos.length - visibleCount) : `Show more (${photos.length - visibleCount} remaining)`}
                   </button>
                 </div>
               )}

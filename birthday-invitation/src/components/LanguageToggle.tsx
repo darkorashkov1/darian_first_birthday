@@ -20,7 +20,7 @@ export default function LanguageToggle({ lang, setLang }: LanguageToggleProps) {
           lang === 'en' ? 'rotate-180' : 'rotate-0'
         }`}
       >
-        {/* MK label (acting like the Sun icon position) */}
+        {/* MK label */}
         <span
           className={`absolute inset-0 flex items-center justify-center text-xs font-black tracking-wider transition-opacity duration-300 ${
             lang === 'mk' ? 'opacity-100 text-sky-950 scale-100' : 'opacity-0 text-sky-400 scale-75 pointer-events-none'
@@ -29,7 +29,7 @@ export default function LanguageToggle({ lang, setLang }: LanguageToggleProps) {
           MK
         </span>
 
-        {/* EN label (acting like the Moon icon position) */}
+        {/* EN label */}
         <span
           className={`absolute inset-0 flex items-center justify-center text-xs font-black tracking-wider transition-opacity duration-300 transform rotate-180 ${
             lang === 'en' ? 'opacity-100 text-sky-950 scale-100' : 'opacity-0 text-sky-400 scale-75 pointer-events-none'
